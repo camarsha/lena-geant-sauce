@@ -1,9 +1,13 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "geant-sauce"
 version = "0.1.0"
 description = "Convert LENAGe simulation data to sauce compatible parquet file."
-readme = "README.org"
 requires-python = ">=3.9"
+
 dependencies = [
     "awkward>=2.8.6",
     "numpy>=2.0.2",
@@ -11,3 +15,7 @@ dependencies = [
     "tqdm>=4.67.1",
     "uproot>=5.6.4",
 ]
+
+
+[project.scripts]
+geant-sauce = "geant_sauce.main:main"

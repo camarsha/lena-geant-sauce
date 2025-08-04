@@ -25,6 +25,7 @@ def main():
     parser.add_argument(
         "parquet_file",
         help="Name of the output Parquet file. Default will be constructed from ROOT file name.",
+        nargs='?',
         default=None,
     )
 
@@ -71,7 +72,7 @@ def main():
                         evt_ts=i,
                     )
     df = pl.DataFrame(events)
-    df.write_parquet("test.parquet")
+    df.write_parquet(outfile)
 
 
 if __name__ == "__main__":
