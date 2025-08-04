@@ -1,0 +1,6 @@
+* geant-sauce
+  Convert LENAGe root files to parquet.
+#+begin_src bash
+  geant-sauce [infile] [outfile]
+#+end_src
+  If out file is excluded, it will be inferred form the input file name.
