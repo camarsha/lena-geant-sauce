@@ -8,6 +8,7 @@ import awkward as ak
 import sys
 from pathlib import Path
 
+
 def add_event(event_list, **kwargs):
     event_list.append(kwargs)
 
@@ -25,7 +26,7 @@ def main():
     parser.add_argument(
         "parquet_file",
         help="Name of the output Parquet file. Default will be constructed from ROOT file name.",
-        nargs='?',
+        nargs="?",
         default=None,
     )
 
@@ -41,13 +42,17 @@ def main():
         outfile = Path(filename).with_suffix(".parquet")
     else:
         outfile = args.parquet_file
-    
+
     r = uproot.open(filename)["fTree;1/RawMC"]
     n_events = len(r["fEventID"].array())
     hpge = r["fEnergyGe"].array().to_numpy() * 1000.0
     hpge_time = ak.fill_none(ak.firsts(r["fGeTime"].array()), 0.0).to_numpy()
+    hpge_angle = ak.fill_none(
+        ak.firsts(r["fGeCreationDirectionz"].array()), 0.0
+    ).to_numpy()
     nai_segs = [
-        r[f"fEnergyNaI_seg{i:02}"].array().to_numpy() * 1000.0 for i in range(16)
+        r[f"fEnergyNaI_seg{i:02}"].array().to_numpy() * 1000.0
+        for i in range(16)
     ]
     nai_time = ak.fill_none(ak.firsts(r["fNaITime"].array()), 0.0).to_numpy()
     events = []
@@ -59,6 +64,7 @@ def main():
                 channel=0,
                 adc=hpge[i],
                 tdc=hpge_time[i],
+                angle=hpge_angle[i],
                 evt_ts=i,
             )
             for seg_id, seg in enumerate(nai_segs):
