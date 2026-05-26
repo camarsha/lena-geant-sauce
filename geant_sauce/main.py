@@ -30,6 +30,14 @@ def main():
         default=None,
     )
 
+    parser.add_argument(
+        "-h",
+        "--hpge_channel",
+        help="Channel of the hpge detector.",
+        type=int,
+        default=0,
+    )
+
     # print help if not enough arguments
     if len(sys.argv) == 1:
         parser.print_help(sys.stderr)
@@ -61,7 +69,7 @@ def main():
             add_event(
                 events,
                 module=225,
-                channel=0,
+                channel=args.hpge_channel,
                 adc=hpge[i],
                 tdc=hpge_time[i],
                 angle=hpge_angle[i],
