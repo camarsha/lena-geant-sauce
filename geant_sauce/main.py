@@ -31,7 +31,7 @@ def main():
     )
 
     parser.add_argument(
-        "-h",
+        "-c",
         "--hpge_channel",
         help="Channel of the hpge detector.",
         type=int,
