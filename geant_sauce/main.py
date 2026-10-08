@@ -63,7 +63,21 @@ def main():
         for i in range(16)
     ]
     nai_time = ak.fill_none(ak.firsts(r["fNaITime"].array()), 0.0).to_numpy()
+
+    # this handles the per transition energy deposition.
+    # first create a map of the transitions that are present
+    sum_data = True
+    try:
+        transitions = r["fPrimaryGammaE"].array()
+        transitions_unique = np.unique(ak.flatten(r["fPrimaryGammaE"]).array())
+        transition_map = {float(k): v for v, k in enumerate(transitions_unique)}
+        hpge_sums = r["fPrimaryGammaEdepGe"].array()
+    except uproot.KeyInFileError:
+        print("No sum data found.")
+        sum_data = False
+
     events = []
+    sum_events = []
     for i in tqdm(range(n_events)):
         if hpge[i] > 0.0:
             add_event(
@@ -75,6 +89,26 @@ def main():
                 angle=hpge_angle[i],
                 evt_ts=i,
             )
+            # handle individual transitions.
+            if sum_data:
+                for t, e in zip(transitions[i], hpge_sums[i]):
+                    # we are mapping these to different modules
+                    idx = transition_map[float(t)]
+                    # this is also a hack for now where the tdc is the transition energy
+                    add_event(
+                        sum_events,
+                        module=225,
+                        channel=args.hpge_channel,
+                        adc=e,
+                        tdc=hpge_time[i],
+                        transition_energy=t,
+                        transition_idx=idx,
+                        angle=hpge_angle[
+                            i
+                        ],  # needs to be updated at some point.
+                        evt_ts=i,
+                    )
+
             for seg_id, seg in enumerate(nai_segs):
                 if seg[i] > 0.0:
                     add_event(
