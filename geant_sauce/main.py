@@ -49,9 +49,7 @@ def main():
         outfile = Path(filename).with_suffix(".parquet")
     else:
         outfile = args.parquet_file
-    outfile_sum = Path(Path(args.parquet_file).stem + "_sum").with_suffix(
-        ".parquet"
-    )
+    outfile_sum = outfile.with_name(outfile.stem + "_sum" + outfile.suffix)
 
     r = uproot.open(filename)["fTree;1/RawMC"]
     n_events = len(r["fEventID"].array())
