@@ -72,7 +72,7 @@ def main():
     sum_data = True
     try:
         transitions = r["fPrimaryGammaE"].array()
-        transitions_unique = np.unique(ak.flatten(r["fPrimaryGammaE"]).array())
+        transitions_unique = np.unique(ak.flatten(transitions))
         transition_map = {float(k): v for v, k in enumerate(transitions_unique)}
         hpge_sums = r["fPrimaryGammaEdepGe"].array()
     except uproot.KeyInFileError:
