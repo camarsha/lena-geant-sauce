@@ -1,5 +1,4 @@
 import argparse
-from numpy import append
 from tqdm import tqdm
 import uproot
 import polars as pl
@@ -48,8 +47,12 @@ def main():
     filename = args.root_file
     if args.parquet_file is None:
         outfile = Path(filename).with_suffix(".parquet")
+        outfile_sum = Path(filename + "_sum").with_suffix(".parquet")
     else:
         outfile = args.parquet_file
+        outfile_sum = Path(Path(args.parquet_file).stem + "_sum").with_suffix(
+            ".parquet"
+        )
 
     r = uproot.open(filename)["fTree;1/RawMC"]
     n_events = len(r["fEventID"].array())
@@ -121,6 +124,9 @@ def main():
                     )
     df = pl.DataFrame(events)
     df.write_parquet(outfile)
+
+    df_sum = pl.DataFrame(sum_events)
+    df_sum.write_parquet(outfile_sum)
 
 
 if __name__ == "__main__":
